@@ -15,6 +15,7 @@ reached after its window closes is late, and work past 17:00 is overtime (nothin
 
 from __future__ import annotations
 
+import itertools
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 
@@ -43,7 +44,7 @@ def timeline(tech: Tech, route: Sequence[Job], dur: dict[int, float]) -> tuple[l
 
 def route_km(tech: Tech, route: Sequence[Job]) -> float:
     pts = [tech.home, *[j.at for j in route], tech.home]
-    return sum(travel_km(a, b) for a, b in zip(pts, pts[1:], strict=False))
+    return sum(travel_km(a, b) for a, b in itertools.pairwise(pts))
 
 
 def feasible(tech: Tech, route: Sequence[Job], dur: dict[int, float]) -> bool:

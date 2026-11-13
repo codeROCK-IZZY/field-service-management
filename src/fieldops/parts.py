@@ -59,7 +59,7 @@ def job_kit(model: PartModel, route: Sequence[Job], core: set[str], slots: int =
     probs = [model.proba(j) for j in route]
     kit = set(core)
     while len(kit) < slots:
-        gain: Counter[str] = Counter()
+        gain: dict[str, float] = defaultdict(float)
         for p in probs:
             for part, q in p.items():
                 if part and part not in kit:

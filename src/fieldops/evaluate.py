@@ -117,7 +117,7 @@ def run_bank(seeds: Sequence[int], shape: Shape, buffers: dict[str, float], prio
 def tune() -> dict[str, Any]:
     seeds, shape = BANKS["tuning"]
     regions = [make_region(s, shape) for s in seeds]
-    grid = []
+    grid: list[dict[str, Any]] = []
     for name in PLANNERS:
         for b in BUFFERS:
             t = totals([run_region(r, name, b, 2.0) for r in regions])
@@ -130,12 +130,12 @@ def tune() -> dict[str, Any]:
                     "overtime_h_per_tech_day": t["overtime_h_per_tech_day"],
                 }
             )
-    buffers = {}
+    buffers: dict[str, float] = {}
     for name in PLANNERS:
         rows = [g for g in grid if g["planner"] == name]
         best = max(rows, key=lambda g: (round(g["kept_share"], 4), -g["overtime_h_per_tech_day"]))
-        buffers[name] = best["buffer"]
-    priors = []
+        buffers[name] = float(best["buffer"])
+    priors: list[dict[str, float]] = []
     for p in PRIORS:
         t = totals([run_region(r, "optimised", buffers["optimised"], p) for r in regions])
         priors.append({"prior": p, "first_time_fix_kit": t["first_time_fix_kit"]})
